@@ -49,6 +49,31 @@ This work extends our earlier composition-specific study ([Materials Today Elect
 ├── gan/
 │   └── ccdcgan.py                   # WGAN with formation-energy constraint (main generative model)
 │
+├── outputs/                         # Generated V–O crystal structures organized by stoichiometry
+│   ├── V1O1/                        # VO  — rock-salt and related phases
+│   ├── V1O2/                        # VO₂ — rutile, monoclinic, and novel polymorphs
+│   ├── V1O4/                        # VO₄ — oxygen-rich phases
+│   ├── V2O1/                        # V₂O — vanadium-rich phases
+│   ├── V2O2/                        # V₂O₂ (≡ VO, larger supercell variants)
+│   ├── V2O3/                        # V₂O₃ — corundum-related phases
+│   ├── V2O4/                        # V₂O₄ — intermediate oxide phases
+│   ├── V2O5/                        # V₂O₅ — layered pentoxide phases
+│   ├── V2O6/                        # V₂O₆ — oxygen-rich phases
+│   ├── V2O7/                        # V₂O₇
+│   ├── V2O8/                        # V₂O₈
+│   ├── V2O9/                        # V₂O₉
+│   ├── V2O10/                       # V₂O₁₀
+│   ├── V2O11/                       # V₂O₁₁
+│   ├── V2O12/                       # V₂O₁₂ — most oxygen-rich generated phase
+│   ├── V3O1/                        # V₃O — vanadium-rich Magnéli-type phases
+│   ├── V3O2/                        # V₃O₂
+│   ├── V3O3/                        # V₃O₃ (≡ VO, larger supercell variants)
+│   ├── V3O4/                        # V₃O₄ — spinel-related mixed-valence phases
+│   ├── V3O5/                        # V₃O₅ — monoclinic intermediate oxide
+│   ├── V3O6/                        # V₃O₆
+│   ├── V3O7/                        # V₃O₇
+│   └── V3O8/                        # V₃O₈
+│
 ├── database/
 │   └── database/
 │       ├── geometries/              # 10,981 V–O crystal structures in VASP POSCAR format
@@ -91,6 +116,8 @@ pip install -r requirements.txt
 
 The `database/` directory contains the full training and validation dataset:
 
+### Training database
+
 | Location | Contents | Count |
 |---|---|---|
 | `database/database/geometries/` | V–O crystal structures (VASP POSCAR format) | 10,981 files |
@@ -99,6 +126,14 @@ The `database/` directory contains the full training and validation dataset:
 **Dataset construction:** Structures were generated via systematic element substitution on binary oxide and metallic templates from the Materials Project database. Each structure was relaxed with VASP using PBE+U (U_eff = 3.25 eV for V-3d) and the resulting formation energies span −2.68 to +4.35 eV/atom with oxygen fractions from 0.07 to 0.93.
 
 **File naming:** Each `.vasp` geometry file and its corresponding `.npy` energy file share the same filename stem (e.g., `mp-12345.vasp` and `mp-12345.npy`).
+
+### Generated structures (outputs)
+
+| Location | Contents |
+|---|---|
+| `outputs/VxOy/` | All generated crystal structures for each of the 22 V–O stoichiometries |
+
+The `outputs/` directory contains 1,622 generated V–O structures organized into 22 subdirectories by stoichiometry — from vanadium-rich phases (V₃O, V₂O) through the well-studied intermediate oxides (VO, V₂O₃, VO₂, V₂O₅) to oxygen-rich compositions (V₂O₁₂). Each subdirectory may contain multiple candidate structures for that stoichiometry, stored in VASP POSCAR format. Structures were filtered for geometric validity (no atomic overlaps, interatomic distances > 0.8 Å, physically plausible density) prior to inclusion. Thermodynamic stability of each candidate can be assessed by running DFT relaxation and comparing the resulting formation energy against the Materials Project convex hull.
 
 ---
 
