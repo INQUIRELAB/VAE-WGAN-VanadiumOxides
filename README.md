@@ -9,7 +9,7 @@ Official implementation for the paper:
 
 > **Physics-Informed Inverse Design of Stable Vanadium Oxide Crystals for Aerospace Applications**  
 > Danial Ebrahimzadeh, Sarah S. Sharif, Yaser M. Banad  
-> *AIAA Journal* (under review), 2025  
+> *AIAA Journal* (under review), 2026  
 > INQUIRE Lab, School of Electrical and Computer Engineering, University of Oklahoma
 
 ---
@@ -25,13 +25,12 @@ The framework:
 - Validates every generated candidate through DFT relaxation and phonon dispersion calculations
 
 **Key results** (from 10,981 training structures):
-- 1,622 unique V–O compositions generated spanning 22 distinct stoichiometries (V₃O through V₂O₁₂)
+- 1,622 unique V–O compositions generated spanning 22 distinct stoichiometries
 - **81.5% validity**, **96.6% uniqueness**, **99.5% novelty**, **0.973 structural diversity**
 - **324 stable** structures (20%) with E_f < 0 and ≤ 300 meV/atom above convex hull
 - **243 metastable** structures (15%) within ≤ 500 meV/atom
 - Dynamic stability confirmed for selected candidates via phonon calculations
 
-This work extends our earlier composition-specific study ([Materials Today Electronics, 2025](https://doi.org/10.1016/j.mtelec.2025.100155)) from three target stoichiometries to composition-agnostic generation across the full V–O binary phase space.
 
 ---
 
@@ -123,61 +122,8 @@ The `database/` directory contains the full training and validation dataset:
 | `database/database/geometries/` | V–O crystal structures (VASP POSCAR format) | 10,981 files |
 | `database/database/properties/formation_energy/` | DFT formation energies (NumPy `.npy` format) | 10,981 files |
 
-**Dataset construction:** Structures were generated via systematic element substitution on binary oxide and metallic templates from the Materials Project database. Each structure was relaxed with VASP using PBE+U (U_eff = 3.25 eV for V-3d) and the resulting formation energies span −2.68 to +4.35 eV/atom with oxygen fractions from 0.07 to 0.93.
-
 **File naming:** Each `.vasp` geometry file and its corresponding `.npy` energy file share the same filename stem (e.g., `mp-12345.vasp` and `mp-12345.npy`).
 
-### Generated structures (outputs)
-
-| Location | Contents |
-|---|---|
-| `outputs/VxOy/` | All generated crystal structures for each of the 22 V–O stoichiometries |
-
-The `outputs/` directory contains 1,622 generated V–O structures organized into 22 subdirectories by stoichiometry — from vanadium-rich phases (V₃O, V₂O) through the well-studied intermediate oxides (VO, V₂O₃, VO₂, V₂O₅) to oxygen-rich compositions (V₂O₁₂). Each subdirectory may contain multiple candidate structures for that stoichiometry, stored in VASP POSCAR format. Structures were filtered for geometric validity (no atomic overlaps, interatomic distances > 0.8 Å, physically plausible density) prior to inclusion. Thermodynamic stability of each candidate can be assessed by running DFT relaxation and comparing the resulting formation energy against the Materials Project convex hull.
-
----
-
-## Usage
-
-### Step 1: Prepare the dataset and train VAEs
-
-```bash
-# Generate voxel representations from VASP structures
-python prepare/data_transformation.py
-
-# Prepare train/test splits and data for constraint regressor
-python prepare/generate_train.py
-python prepare/data_for_constrains.py
-
-# Train the formation-energy CNN regressor (must be done before GAN training)
-python prepare/constrain_reg.py
-
-# Train the lattice VAE
-python prepare/Improved_lattice_autoencoder_plot.py
-
-# Train the atomic-site VAE
-python prepare/sites_autoencoder_plot.py
-```
-
-### Step 2: Train the formation-energy-constrained WGAN
-
-```bash
-python train_GAN.py
-```
-
-The WGAN is trained for 5,000 epochs using Adam optimizer (lr = 2×10⁻⁴, β₁ = 0.5) with formation-energy constraint weight λ = 0.1.
-
-### Step 3: Generate novel V–O structures
-
-Novel crystal structures are sampled inside `gan/ccdcgan.py` after training. Generated structures are decoded from the latent space to real-space voxel grids and then to VASP POSCAR format via the three-step atom extraction procedure (Gaussian smoothing → local maxima detection → coordinate scaling).
-
-### Step 4: Convert CIF files (optional)
-
-If you have CIF-format structures and wish to add them to the database:
-
-```bash
-python convert_cif2vasp.py --input path/to/file.cif --output path/to/output.vasp
-```
 
 ---
 
@@ -217,25 +163,7 @@ where $\hat{E}_f$ is the frozen CNN formation-energy regressor. The exponential 
 |---|---|
 | **Stable** | E_f < 0 AND ≤ 300 meV/atom above MP convex hull |
 | **Metastable** | E_f < 0 AND ≤ 500 meV/atom above MP convex hull |
-
----
-
-## DFT Computational Parameters
-
-All DFT calculations use VASP with the following settings (consistent across dataset generation and post-generation validation):
-
-| Parameter | Value |
-|---|---|
-| Exchange-correlation functional | PBE (GGA) |
-| Pseudopotentials | PAW |
-| Plane-wave cutoff | 500 eV |
-| k-point grid spacing | 0.5 Å⁻¹ |
-| Energy convergence | 10⁻⁵ eV |
-| Force convergence | 0.05 eV/Å |
-| DFT+U (Dudarev, V-3d) | U_eff = 3.25 eV |
-| Phonon supercells | 3×3×2 to 5×4×4 |
-| Phonon code | Phonopy |
-
+<!--
 ---
 
 ## Citation
@@ -267,7 +195,7 @@ Please also cite our earlier related work:
   doi     = {10.1016/j.mtelec.2025.100155}
 }
 ```
-
+-->
 ---
 
 ## License
@@ -282,7 +210,7 @@ For questions about the code or dataset, please open a GitHub Issue or contact:
 
 - **Danial Ebrahimzadeh** — danial.ebrahimzadeh@ou.edu  
 - **Prof. Yaser M. Banad** — banad@ou.edu  
-- **INQUIRE Lab** — https://inquirelab.ece.ou.edu
+- **INQUIRE Lab** — https://inquirelab.ai
 
 School of Electrical and Computer Engineering  
 University of Oklahoma, Norman, OK 73019
