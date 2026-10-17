@@ -1,216 +1,199 @@
-# Physics-Informed Inverse Design of Stable Vanadium Oxide Crystals for Aerospace Applications
+# Physics-Informed Generative Inverse Design of Stable Vanadium Oxide Crystals with First-Principles Validation
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
 [![TensorFlow](https://img.shields.io/badge/TensorFlow-2.10%2B-orange)](https://www.tensorflow.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![AIAA Journal](https://img.shields.io/badge/Journal-AIAA%20Journal-blue)](https://arc.aiaa.org/journal/aiaaj)
+[![License: Noncommercial](https://img.shields.io/badge/License-Noncommercial-blue.svg)](LICENSE)
+[![Data: Hugging Face](https://img.shields.io/badge/Data-Hugging%20Face-yellow)](https://huggingface.co/datasets/danial199472/belowhull)
 
-Official implementation for the paper:
+Official code and data for the paper:
 
-> **Physics-Informed Inverse Design of Stable Vanadium Oxide Crystals for Aerospace Applications**  
-> Danial Ebrahimzadeh, Sarah S. Sharif, Yaser M. Banad  
-> *AIAA Journal* (under review), 2026  
+> **Physics-Informed Generative Inverse Design of Stable Vanadium Oxide Crystals with First-Principles Validation**
+> Danial Ebrahimzadeh, Sarah S. Sharif, Yaser M. Banad
+> *Discover Materials* (under review), 2026
 > INQUIRE Lab, School of Electrical and Computer Engineering, University of Oklahoma
 
 ---
 
 ## Overview
 
-This repository contains the complete code and dataset for a physics-guided inverse design framework that couples a **voxel-based Variational Autoencoder (VAE)** with a **formation-energy-constrained Wasserstein GAN (WGAN)** to discover thermodynamically stable vanadium oxide (V–O) crystal structures for aerospace applications.
+This repository contains the code, training database and generated structures for an inverse-design workflow that couples a **voxel-based variational autoencoder (VAE)** with a **formation-energy-constrained Wasserstein GAN (WGAN)** to generate vanadium oxide (V–O) crystal candidates.
 
-The framework:
-- Encodes crystal structures as element-resolved 3D voxel grids (64³ for atomic channels, 32³ for lattice geometry)
-- Compresses them into a continuous latent space via the VAE
-- Samples novel candidates using a WGAN whose generator is steered toward thermodynamically stable regions via an exponential formation-energy penalty predicted by a frozen CNN regressor
-- Validates every generated candidate through DFT relaxation and phonon dispersion calculations
+- Crystals are encoded as element-resolved 3D voxel grids (64³ for the V and O channels, 32³ for lattice geometry).
+- Two VAEs compress the grids into a continuous latent space.
+- A WGAN samples new latent codes; its generator is biased toward low formation energy by an exponential penalty from a frozen CNN regressor.
+- Every generated candidate is relaxed with DFT (PBE+U) and placed against the Materials Project convex hull; phonon calculations assess lattice-dynamical stability.
 
-**Key results** (from 10,981 training structures):
-- 1,622 unique V–O compositions generated spanning 22 distinct stoichiometries
-- **81.5% validity**, **96.6% uniqueness**, **99.5% novelty**, **0.973 structural diversity**
-- **324 stable** structures (20%) with E_f < 0 and ≤ 300 meV/atom above convex hull
-- **243 metastable** structures (15%) within ≤ 500 meV/atom
-- Dynamic stability confirmed for selected candidates via phonon calculations
+**Key results**
 
+| Quantity | Value |
+|---|---|
+| Training structures (DFT-relaxed) | 10,981 |
+| Generated candidates | 6,592 |
+| Validity / uniqueness / novelty | 81.5% / 96.6% / 98.7% |
+| Candidates with E_f < 0 | 1,846 |
+| Within 100 meV/atom of the MP hull | 302 (136 within 50 meV/atom) |
+| Below the MP hull | 94 |
+| Fraction within 300 meV/atom, composition-matched DFT control (λ = 0 → λ = 0.1) | 15.9% → 25.4% |
 
 ---
 
 ## Repository Structure
 
 ```
+├── All_materials_index_with_Ef.csv   # DFT results for all 6,592 generated candidates (see below)
+│
 ├── prepare/
-│   ├── data_transformation.py       # Crystal → 3D voxel grid encoding (σ = 0.26 Å)
-│   ├── generate_train.py            # Dataset preparation and train/test splitting
-│   ├── constrain_reg.py             # Formation-energy CNN regressor training
-│   ├── data_for_constrains.py       # Data pipeline for the CNN regressor
-│   ├── Improved_lattice_autoencoder_plot.py   # Lattice VAE training and visualization
-│   └── sites_autoencoder_plot.py    # Atomic-site VAE training and visualization
+│   ├── data_transformation.py        # Crystal → 3D voxel grid encoding (σ = 0.26 Å)
+│   ├── generate_train.py             # Dataset preparation and train/test splitting
+│   ├── Improved_lattice_autoencoder_plot.py   # Lattice VAE training and visualisation
+│   ├── sites_autoencoder_plot.py     # Atomic-site VAE training and visualisation
+│   ├── data_for_constrains.py        # Data pipeline for the formation-energy regressor
+│   └── constrain_reg.py              # Formation-energy CNN regressor training
 │
 ├── gan/
-│   └── ccdcgan.py                   # WGAN with formation-energy constraint (main generative model)
+│   └── ccdcgan.py                    # WGAN with formation-energy constraint
 │
-├── outputs/                         # Generated V–O crystal structures organized by stoichiometry
-│   ├── V1O1/                        # VO  — rock-salt and related phases
-│   ├── V1O2/                        # VO₂ — rutile, monoclinic, and novel polymorphs
-│   ├── V1O4/                        # VO₄ — oxygen-rich phases
-│   ├── V2O1/                        # V₂O — vanadium-rich phases
-│   ├── V2O2/                        # V₂O₂ (≡ VO, larger supercell variants)
-│   ├── V2O3/                        # V₂O₃ — corundum-related phases
-│   ├── V2O4/                        # V₂O₄ — intermediate oxide phases
-│   ├── V2O5/                        # V₂O₅ — layered pentoxide phases
-│   ├── V2O6/                        # V₂O₆ — oxygen-rich phases
-│   ├── V2O7/                        # V₂O₇
-│   ├── V2O8/                        # V₂O₈
-│   ├── V2O9/                        # V₂O₉
-│   ├── V2O10/                       # V₂O₁₀
-│   ├── V2O11/                       # V₂O₁₁
-│   ├── V2O12/                       # V₂O₁₂ — most oxygen-rich generated phase
-│   ├── V3O1/                        # V₃O — vanadium-rich Magnéli-type phases
-│   ├── V3O2/                        # V₃O₂
-│   ├── V3O3/                        # V₃O₃ (≡ VO, larger supercell variants)
-│   ├── V3O4/                        # V₃O₄ — spinel-related mixed-valence phases
-│   ├── V3O5/                        # V₃O₅ — monoclinic intermediate oxide
-│   ├── V3O6/                        # V₃O₆
-│   ├── V3O7/                        # V₃O₇
-│   └── V3O8/                        # V₃O₈
+├── outputs/                          # 6,592 generated structures (VASP POSCAR, .vasp)
+│   ├── V1O1/                         #   one folder per cell composition VxOy
+│   ├── V1O2/
+│   ├── ...
+│   └── V10O10/
 │
 ├── database/
 │   └── database/
-│       ├── geometries/              # 10,981 V–O crystal structures in VASP POSCAR format
+│       ├── geometries/               # 10,981 DFT-relaxed V–O structures (VASP POSCAR)
 │       └── properties/
-│           └── formation_energy/    # 10,981 DFT formation energies as .npy files
+│           └── formation_energy/     # 10,981 DFT formation energies (.npy)
 │
-├── train_GAN.py                     # Main training entry point
-├── convert_cif2vasp.py             # Utility: convert CIF files to VASP POSCAR format
-└── requirements.txt                 # Python dependencies
+├── train_GAN.py                      # Main WGAN training entry point
+├── convert_cif2vasp.py               # Utility: CIF → VASP POSCAR
+├── requirements.txt                  # Python dependencies
+├── LICENSE, LICENSE-CODE.txt, LICENSE-MATERIALS.txt, NOTICE
+└── README.md
 ```
+
+---
+
+## Data
+
+### Generated candidates: `All_materials_index_with_Ef.csv`
+
+One row per generated candidate (6,592 rows). The `MaterialID` matches the file name in `outputs/<Composition>/<MaterialID>.vasp`.
+
+| Column | Description |
+|---|---|
+| `MaterialID` | Candidate identifier (e.g. `epoch_1119`) |
+| `Composition` | Cell composition (e.g. `V2O3`) |
+| `VAtoms`, `OAtoms` | Number of V and O atoms in the cell |
+| `Formation_Energy_eV_per_atom` | DFT (PBE+U) formation energy, eV/atom |
+
+### Generated structures: `outputs/`
+
+The 6,592 generated structures in VASP POSCAR format, grouped into folders by cell composition (`V1O1` … `V10O10`).
+
+### Training database: `database/`
+
+| Location | Contents | Count |
+|---|---|---|
+| `database/database/geometries/` | DFT-relaxed V–O structures (VASP POSCAR) | 10,981 |
+| `database/database/properties/formation_energy/` | DFT formation energies (NumPy `.npy`) | 10,981 |
+
+Each structure and its energy share the same stem, e.g. `mp-1000_copy1_opt.vasp` ↔ `mp-1000_copy1_opt_pack_Ef.npy`.
+
+### Large files (Hugging Face)
+
+| Data | Link |
+|---|---|
+| Below-hull candidates (DFT calculations) | https://huggingface.co/datasets/danial199472/belowhull |
+| Phonon calculations | https://huggingface.co/datasets/danial199472/phonon |
 
 ---
 
 ## Installation
 
-### Prerequisites
-- Python 3.8 or higher
-- CUDA-capable GPU recommended (training was performed on NVIDIA H100)
-- VASP license required for DFT validation steps
-
-### Setup
-
 ```bash
-# Clone the repository
 git clone https://github.com/INQUIRELAB/VAE-WGAN-VanadiumOxides.git
 cd VAE-WGAN-VanadiumOxides
 
-# Create a virtual environment (recommended)
 python -m venv venv
 source venv/bin/activate        # Linux/macOS
 # venv\Scripts\activate         # Windows
 
-# Install dependencies
 pip install -r requirements.txt
 ```
 
----
+**Requirements:** Python 3.8+; a CUDA-capable GPU is recommended (NVIDIA H100 and H200 GPUs were used in this work). A VASP licence is required only to repeat the DFT validation.
 
-## Dataset
+### Workflow
 
-The `database/` directory contains the full training and validation dataset:
-
-### Training database
-
-| Location | Contents | Count |
-|---|---|---|
-| `database/database/geometries/` | V–O crystal structures (VASP POSCAR format) | 10,981 files |
-| `database/database/properties/formation_energy/` | DFT formation energies (NumPy `.npy` format) | 10,981 files |
-
-**File naming:** Each `.vasp` geometry file and its corresponding `.npy` energy file share the same filename stem (e.g., `mp-12345.vasp` and `mp-12345.npy`).
-
+1. `prepare/data_transformation.py`, `prepare/generate_train.py` – voxelise the training database and split it.
+2. `prepare/Improved_lattice_autoencoder_plot.py`, `prepare/sites_autoencoder_plot.py` – train the lattice and atomic-site VAEs.
+3. `prepare/data_for_constrains.py`, `prepare/constrain_reg.py` – train the formation-energy regressor.
+4. `train_GAN.py` (uses `gan/ccdcgan.py`) – train the constrained WGAN and generate candidates.
 
 ---
 
 ## Methodology Summary
 
-### Crystal Representation
-Each crystal is encoded as three volumetric channels inside a 15 Å cubic box:
-- **Vanadium channel:** 64 × 64 × 64 grid, Gaussian RBF with σ = 0.26 Å
-- **Oxygen channel:** 64 × 64 × 64 grid, Gaussian RBF with σ = 0.26 Å
-- **Lattice channel:** 32 × 32 × 32 grid encoding cell dimensions and angles
+### Crystal representation
+Each crystal is placed in a 15 Å cubic box and encoded as:
+- **V channel** and **O channel:** 64 × 64 × 64 grids (≈ 0.23 Å spacing), Gaussian functions with σ = 0.26 Å at the atomic positions;
+- **Lattice channel:** 32 × 32 × 32 grid encoding the cell lengths and angles.
 
-Voxels below an occupancy threshold of 0.02 are masked to zero.
+Voxels below an occupancy of 0.02 are set to zero.
 
-### VAE Architecture
-| Component | Latent dim | Epochs | Optimizer | Learning rate |
-|---|---|---|---|---|
-| Lattice VAE | 25 | 201 | Adam | 3×10⁻⁴ |
-| Atomic-site VAE | 200 | 101 | Adam | 3×10⁻⁴ |
-
-The concatenated 225-dimensional latent code is the input to the WGAN.
-
-### Formation-Energy CNN Regressor
-- Input: 225-dimensional latent code, zero-padded to 784 dimensions and reshaped to 28 × 28
-- Architecture: 4 Conv2D layers + 5 Dense layers with LeakyReLU activations
-- Loss: Mean Squared Error (MSE)
-- Training: 50 epochs, 90/10 train–test split
-
-### WGAN Generator Loss
-The generator minimizes:
-
-$$\mathcal{L}_G = -\mathbb{E}_{\mathbf{z}}[C(G(\mathbf{z}))] + \frac{\lambda}{B}\sum_{i=1}^{B}\exp(\hat{E}_f(G(\mathbf{z}_i))), \quad \lambda = 0.1$$
-
-where $\hat{E}_f$ is the frozen CNN formation-energy regressor. The exponential penalty is small when $\hat{E}_f < 0$ (stable) and grows rapidly when $\hat{E}_f > 0$ (unstable), biasing generation toward thermodynamically favorable structures.
-
-### Stability Criteria
-| Class | Criterion |
+### Model
+| Component | Setting |
 |---|---|
-| **Stable** | E_f < 0 AND ≤ 300 meV/atom above MP convex hull |
-| **Metastable** | E_f < 0 AND ≤ 500 meV/atom above MP convex hull |
-<!--
+| Latent dimension – site VAE / lattice VAE | 200 / 25 |
+| Generator output and regressor input | 28 × 28 map (425 latent values, 359 zeros) |
+| WGAN noise dimension | 200 |
+| WGAN training | 5,000 epochs, Adam (lr 2 × 10⁻⁴, β₁ = 0.5), batch 128, n_critic = 5, weight clipping c = 0.01 |
+| Formation-energy regressor | 4 Conv2D + 6 dense layers, MSE loss, test MAE 0.064 eV/atom |
+
+The generator minimises
+
+$$\mathcal{L}_G = -\mathbb{E}_{\mathbf{z}}[C(G(\mathbf{z}))] + \frac{\lambda}{B}\sum_{i=1}^{B}\exp\big(\hat{E}_f(G(\mathbf{z}_i))\big), \quad \lambda = 0.1,$$
+
+where $\hat{E}_f$ is the frozen formation-energy regressor. The penalty is small for $\hat{E}_f < 0$ and grows rapidly for $\hat{E}_f > 0$.
+
+### DFT validation
+VASP, PBE+U (Dudarev, U_eff = 3.25 eV on V-3d), spin-polarised with ferromagnetic initial moments, 500 eV plane-wave cutoff, Γ-centred k-meshes at 0.5 Å⁻¹ spacing, convergence 10⁻⁵ eV (energy) and 0.05 eV/Å (forces). Energies are corrected with the Materials Project 2020 compatibility scheme before the convex-hull comparison.
+
+### Stability classification
+Candidates with E_f < 0 are placed against the Materials Project convex hull: **below-hull** (ΔE_hull < 0), **low-energy** (0–300 meV/atom), **intermediate-energy** (300–500 meV/atom) and **high-energy** (> 500 meV/atom).
+
 ---
 
 ## Citation
 
-If you use this code or dataset in your research, please cite:
+If you use this code or data, please cite:
 
 ```bibtex
-@article{ebrahimzadeh2025aiaa,
+@article{ebrahimzadeh2026vo,
   author  = {Ebrahimzadeh, Danial and Sharif, Sarah S. and Banad, Yaser M.},
-  title   = {Physics-Informed Inverse Design of Stable Vanadium Oxide Crystals
-             for Aerospace Applications},
-  journal = {AIAA Journal},
-  year    = {2025},
+  title   = {Physics-Informed Generative Inverse Design of Stable Vanadium Oxide
+             Crystals with First-Principles Validation},
+  journal = {Discover Materials},
+  year    = {2026},
   note    = {Under review}
 }
 ```
 
-Please also cite our earlier related work:
-
-```bibtex
-@article{ebrahimzadeh2025mte,
-  author  = {Ebrahimzadeh, Danial and Sharif, Sarah S. and Banad, Yaser M.},
-  title   = {Accelerated discovery of vanadium oxide compositions:
-             A {WGAN-VAE} framework for materials design},
-  journal = {Materials Today Electronics},
-  volume  = {13},
-  pages   = {100155},
-  year    = {2025},
-  doi     = {10.1016/j.mtelec.2025.100155}
-}
-```
--->
 ---
 
 ## License
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+Original INQUIRE Lab code is licensed under the PolyForm Noncommercial License 1.0.0 (`LICENSE-CODE.txt`). Original datasets, figures and documentation are licensed under CC BY-NC 4.0 (`LICENSE-MATERIALS.txt`). See [LICENSE](LICENSE) for the scope. Materials from other rights holders retain their original terms.
 
 ---
 
 ## Contact
 
-For questions about the code or dataset, please open a GitHub Issue or contact:
+For questions about the code or data, please open a GitHub Issue or contact:
 
-- **Danial Ebrahimzadeh** — danial.ebrahimzadeh@ou.edu  
-- **Prof. Yaser M. Banad** — banad@ou.edu  
+- **Danial Ebrahimzadeh** — danial.ebrahimzadeh@ou.edu
+- **Prof. Yaser M. Banad** — banad@ou.edu
 - **INQUIRE Lab** — https://inquirelab.ai
 
-School of Electrical and Computer Engineering  
-University of Oklahoma, Norman, OK 73019
+School of Electrical and Computer Engineering, University of Oklahoma, Norman, OK 73019
