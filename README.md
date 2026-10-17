@@ -12,7 +12,7 @@ Official code and data for the paper:
 > INQUIRE Lab, School of Electrical and Computer Engineering, University of Oklahoma
 
 <p align="center">
-  <img src="figures/vo_system.png" alt="V–O system" width="750">
+  <img src="IMAGE_1_LINK" alt="V–O system" width="750">
 </p>
 
 ---
@@ -27,22 +27,11 @@ This repository contains the code, training database and generated structures fo
 - Every generated candidate is relaxed with DFT and compared with the Materials Project convex hull; phonon calculations assess lattice-dynamical stability.
 
 <p align="center">
-  <img src="figures/inverse_design.png" alt="Inverse design workflow" width="650">
+  <img src="IMAGE_2_LINK" alt="Inverse design workflow" width="650">
 </p>
 
-**Key results**
-
-| Quantity | Value |
-|---|---|
-| Training structures (DFT-relaxed) | 10,981 |
-| Generated candidates | 6,592 |
-| Validity / uniqueness / novelty | 81.5% / 96.6% / 98.7% |
-| Candidates with E_f < 0 | 1,846 |
-| Within 100 meV/atom of the MP hull | 302 (136 within 50 meV/atom) |
-| Below the MP hull | 94 |
-
 <p align="center">
-  <img src="figures/formation_energy_hull.png" alt="Formation energy of generated candidates" width="700">
+  <img src="IMAGE_3_LINK" alt="Formation energy of generated candidates" width="700">
 </p>
 
 ---
@@ -75,7 +64,6 @@ This repository contains the code, training database and generated structures fo
 │       └── properties/
 │           └── formation_energy/     # 10,981 DFT formation energies (.npy)
 │
-├── figures/                          # Figures used in this README
 ├── train_GAN.py                      # Main WGAN training entry point
 ├── convert_cif2vasp.py               # Utility: CIF → VASP POSCAR
 ├── requirements.txt                  # Python dependencies
@@ -98,7 +86,8 @@ This repository contains the code, training database and generated structures fo
 
 ### Large files (Hugging Face)
 
-The DFT calculations of the 94 below-hull candidates and the phonon calculations are available at [belowhull](https://huggingface.co/datasets/danial199472/belowhull) and [phonon](https://huggingface.co/datasets/danial199472/phonon).
+- DFT calculations of the 94 below-hull candidates: https://huggingface.co/datasets/danial199472/belowhull
+- Phonon calculations: https://huggingface.co/datasets/danial199472/phonon
 
 ---
 
@@ -155,4 +144,3 @@ For questions about the code or data, please open a GitHub Issue or contact:
 
 - Danial Ebrahimzadeh — [danial.ebrahimzadeh@ou.edu](mailto:danial.ebrahimzadeh@ou.edu)
 - Yaser M. Banad — [bana@ou.edu](mailto:bana@ou.edu)
-- INQUIRE Lab — [inquirelab.ai](https://inquirelab.ai)
