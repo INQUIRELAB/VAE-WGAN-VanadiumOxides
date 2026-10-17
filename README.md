@@ -3,7 +3,11 @@
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
 [![TensorFlow](https://img.shields.io/badge/TensorFlow-2.10%2B-orange)](https://www.tensorflow.org/)
 [![License: Noncommercial](https://img.shields.io/badge/License-Noncommercial-blue.svg)](LICENSE)
+<<<<<<< HEAD
 [![Data: Hugging Face](https://img.shields.io/badge/Data-Hugging%20Face-yellow)](https://huggingface.co/datasets/danial199472/belowhull)
+=======
+[![AIAA Journal](https://img.shields.io/badge/Journal-AIAA%20Journal-blue)](https://arc.aiaa.org/journal/aiaaj)
+>>>>>>> f0932b15bcffb3fb66394c700ab1bdc9989fe3e3
 
 Official code and data for the paper:
 
@@ -184,7 +188,11 @@ If you use this code or data, please cite:
 
 ## License
 
+<<<<<<< HEAD
 Original INQUIRE Lab code is licensed under the PolyForm Noncommercial License 1.0.0 (`LICENSE-CODE.txt`). Original datasets, figures and documentation are licensed under CC BY-NC 4.0 (`LICENSE-MATERIALS.txt`). See [LICENSE](LICENSE) for the scope. Materials from other rights holders retain their original terms.
+=======
+This project is licensed under the PolyForm Noncommercial License 1.0.0. See [LICENSE](LICENSE) for details.
+>>>>>>> f0932b15bcffb3fb66394c700ab1bdc9989fe3e3
 
 ---
 
@@ -196,4 +204,13 @@ For questions about the code or data, please open a GitHub Issue or contact:
 - **Prof. Yaser M. Banad** — banad@ou.edu
 - **INQUIRE Lab** — https://inquirelab.ai
 
+<<<<<<< HEAD
 School of Electrical and Computer Engineering, University of Oklahoma, Norman, OK 73019
+=======
+School of Electrical and Computer Engineering  
+University of Oklahoma, Norman, OK 73019
+
+## License scope
+
+Original INQUIRE Lab code is licensed under PolyForm Noncommercial License 1.0.0. Original INQUIRE Lab datasets, figures, and documentation are licensed under CC BY-NC 4.0. See [LICENSE](LICENSE) for scope and the full license texts. Materials from other rights holders retain their original terms.
+>>>>>>> f0932b15bcffb3fb66394c700ab1bdc9989fe3e3
