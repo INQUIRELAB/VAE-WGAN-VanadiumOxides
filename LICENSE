@@ -1,13 +1,21 @@
-# License scope
+MIT License
 
-Copyright (c) 2026 INQUIRE Lab, School of Electrical and Computer Engineering, University of Oklahoma.
+Copyright (c) 2026 INQUIRE Lab, University of Oklahoma
 
-Original software, scripts, notebooks, and software configuration supplied by INQUIRE Lab are offered under the PolyForm Noncommercial License 1.0.0 in LICENSE-CODE.txt. Original datasets, figures, documentation, and other research materials supplied by INQUIRE Lab are offered under Creative Commons Attribution-NonCommercial 4.0 International in LICENSE-MATERIALS.txt. These licenses apply to their respective categories, rather than offering a choice of license for the same material. Archive contents follow the same distinction.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-These grants cover only rights that INQUIRE Lab has authority to license. Material from other rights holders, including dependencies, datasets, model weights, and incorporated code, retains its original terms. Existing notices identifying separate terms must be preserved. No rights to such material are supplied by this notice.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-Please cite the associated publication identified in the repository README or CITATION.cff when reporting research that uses these materials. Retain the attribution and notices required by the applicable license.
-
-Copies previously obtained under another license retain the rights granted under that license. This notice does not revoke prior grants. Rights of the United States Government under applicable awards are preserved.
-
-Commercial licensing inquiries may be directed to INQUIRE Lab, School of Electrical and Computer Engineering, University of Oklahoma.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
